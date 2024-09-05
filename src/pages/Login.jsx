@@ -19,14 +19,15 @@ export default function LoginPage() {
                 <img src={trackitlogo} alt="TrackIt Logo"></img>
                 <Enter
                     id="email"
-                    placeholder="email"
+                    placeholder="  email"
                     required
                     type="text"
                     value={email}
                     onChange={e => setEmail(e.target.value)} />
+                    
                 <Enter
                     id="senha"
-                    placeholder="senha"
+                    placeholder="  senha"
                     required
                     type="password"
                     value={password}
@@ -56,11 +57,10 @@ flex-wrap: wrap;
         padding: 20px;
     }
     button{
-        font-family: Sarala;
-        font-size: 18px;
-        font-weight: 700;
-        line-height: 29.35px;
-        letter-spacing: 0.04em;
+        font-family: Lexend Deca;
+        font-size: 20.98px;
+        font-weight: 400;
+        line-height: 26.22px;
         text-align: center;
 
 
@@ -97,11 +97,9 @@ const Enter = styled.input`
     border: 1px solid #D4D4D4;
     border-radius: 5px;
 
-    font-family: Roboto;
-    font-size: 16px;
-    font-style: italic;
+    font-family: Lexend Deca;
+    font-size: 19.98px;
     font-weight: 400;
-    line-height: 18.75px;
+    line-height: 24.97px;
     text-align: left;
-
 `
