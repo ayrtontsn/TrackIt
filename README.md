@@ -1,0 +1,1 @@
+Sabe a academia que você contratou e nunca foi ou o livro que você comprou e nunca leu? Com o TrackIt, o gerenciador de hábitos que você construirá nesse projeto, esses problemas ficarão no passado!
