@@ -3,14 +3,29 @@ import trackitlogo from '../assets/trackit.svg'
 import axios from 'axios';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom"
 
 export default function LoginPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const navigate = useNavigate();
 
-    function login(e) {
+    function login(event) {
         event.preventDefault();
-        console.log(email, password)
+
+        const requisicao = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login", {
+            
+            email, password
+        })
+        requisicao.then((e) => {
+            console.log(e.data),
+            localStorage.setItem("token",e.data.token)
+            //setLoading(false),
+            navigate("/habitos")})
+        requisicao.catch((err) => {
+            alert(err.response.data.message)
+            //setLoading(false)
+            })
     }
 
     return (

@@ -22,7 +22,7 @@ export default function Signup(){
         setLoading(true)
         let photo = ""
 
-        !image? photo = "https://st3.depositphotos.com/4111759/13425/v/450/depositphotos_134255588-stock-illustration-empty-photo-of-male-profile.jpg": photo = image;
+        !image? photo = "https://th.bing.com/th/id/OIP.Rqw5f6J3R0bxYCe3HnMflQAAAA?rs=1&pid=ImgDetMain": photo = image;
         
         const requisicao = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/sign-up", {
             email, name, image: photo, password
