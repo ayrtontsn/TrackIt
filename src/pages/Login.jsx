@@ -18,7 +18,6 @@ export default function LoginPage() {
             email, password
         })
         requisicao.then((e) => {
-            console.log(e.data),
             localStorage.setItem("token",e.data.token)
             //setLoading(false),
             navigate("/habitos")})

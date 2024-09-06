@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom"
 
+import listhabits from "../components/listhabits";
+import footer from "../components/footer";
+
 export default function Habits() {
     const location = useLocation();
     const id = location.id
@@ -12,7 +15,6 @@ export default function Habits() {
     const name = location.name
     const token = {headers:{Authorization: "Bearer "+localStorage.getItem("token")}}
     
-    const [noItens, setNoitens] = useState(true)
     const [newhabit, setNewhabit] = useState(false)
     const [habit, setHabit] = useState("")
     const [habits, setHabits] = useState(null)
@@ -22,8 +24,7 @@ export default function Habits() {
 
     function week(){
         const days = ["Dom","Seg","Ter","Qua","Qui","Sex","Sab"]
-        //{dom:"D",seg:"S",ter:"T",qua:"Q",qui:"Q",sex:"S",sab:"S"}
-        return(
+       return(
             days.map(day => (
                 <Day
                 key={days.indexOf(day)}
@@ -33,6 +34,12 @@ export default function Habits() {
             ))
         )
     }
+
+    useEffect(() =>{
+        const requisicao = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",token)
+        .then(resposta => {setHabits(resposta.data)})
+        .catch(e => console.log(e.response.data.message))
+    },[])
 
     function add(num){
         if(daily.includes(num)){          
@@ -48,31 +55,25 @@ export default function Habits() {
         name: habit,
         days: daily
     },token)
-    .then(() => {
+    .then((resposta) => {
         setHabit(""),
         setDaily([]),
         setNewhabit(false)
+        setHabits([...habits,resposta.data])
     })
     .catch((e) => alert(e.response.data.message))
     }
 
 
 
-
-    useEffect(() =>{
-        const requisicao = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",token)
-        .then(resposta => console.log(resposta.data))
-        .catch(e => console.log(e.response.data.message))
-    },[])
-
     if(!habits){
+        return(
         <div>
             Carregando...
         </div>
-    }else if(habits!==[]){
-        setNoitens(false)
-        console.log(habits)
+        )
     }
+
     return (
         <Back>
             <Header>
@@ -95,10 +96,11 @@ export default function Habits() {
                 <h5 onClick={() => setNewhabit(false)}>Cancelar</h5>
                 <button type="submit" onClick={save}> Salvar</button>
             </NewHabit>
-            <NoItens $noitens={noItens}>
+            <NoItens $noitens={habits.length}>
                 <p>Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</p>
             </NoItens>
-
+            {listhabits(habits)}
+            {footer()}
         </Back>
     )
 }
@@ -107,8 +109,10 @@ const Back = styled.div`
     position: fixed;
     background-color: #f2f2f2;
     width: 100vw;
-    height:100vh;
+    height:calc(100vh - 80px);
     left: 0;
+
+    overflow-y: scroll;
 
 `
 const Header = styled.div`
@@ -234,7 +238,7 @@ const Enter = styled.input`
     text-align: left;
 `
 const NoItens = styled.div`
-    display: ${props =>(props.noitens?"contents":"none")};
+    display: ${props =>(props.$noitens?"none":"flex")};
     font-family: Lexend Deca;
     font-size: 17.98px;
     font-weight: 400;
@@ -259,6 +263,4 @@ const Day = styled.div`
 
     color: ${props => (props.$bg? "#FFFFFF": "#DBDBDB")} ;
     background-color: ${props => (props.$bg? "#DBDBDB": "#FFFFFF")};
-
-
 `
