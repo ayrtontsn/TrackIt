@@ -60,8 +60,3 @@ const ListDays = styled.h6`
         color: ${props => (props.$enable? "#FFFFFF": "#DBDBDB")} ;
         background-color: ${props => (props.$enable? "#DBDBDB": "#FFFFFF")};
         `
-
-
-    
-//color: ${props => ((props.selected.inclues(props.bg)) ? "#FFFFFF" : "#DBDBDB")} ;
-//background-color: ${props => ((props.selected.inclues(props.bg)) ? "#DBDBDB" : "#FFFFFF")};

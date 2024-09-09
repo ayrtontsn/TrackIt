@@ -4,17 +4,19 @@ import axios from 'axios';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom"
+import Icon from '@mui/material/Icon';
 
 import listhabits from "../components/listhabits";
-import footer from "../components/footer";
 
 export default function Habits() {
     const location = useLocation();
+    const navigate = useNavigate();
+
     const id = location.id
     const image = location.image
     const name = location.name
-    const token = {headers:{Authorization: "Bearer "+localStorage.getItem("token")}}
-    
+    const token = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
+
     const [newhabit, setNewhabit] = useState(false)
     const [habit, setHabit] = useState("")
     const [habits, setHabits] = useState(null)
@@ -22,55 +24,55 @@ export default function Habits() {
 
 
 
-    function week(){
-        const days = ["Dom","Seg","Ter","Qua","Qui","Sex","Sab"]
-       return(
+    function week() {
+        const days = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"]
+        return (
             days.map(day => (
                 <Day
-                key={days.indexOf(day)}
-                onClick={() => add(days.indexOf(day))}
-                $bg={daily.includes(days.indexOf(day))}
+                    key={days.indexOf(day)}
+                    onClick={() => add(days.indexOf(day))}
+                    $bg={daily.includes(days.indexOf(day))}
                 >{day[0]}</Day>
             ))
         )
     }
 
-    useEffect(() =>{
-        const requisicao = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",token)
-        .then(resposta => {setHabits(resposta.data)})
-        .catch(e => console.log(e.response.data.message))
-    },[])
+    useEffect(() => {
+        const requisicao = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits", token)
+            .then(resposta => { setHabits(resposta.data) })
+            .catch(e => console.log(e.response.data.message))
+    }, [])
 
-    function add(num){
-        if(daily.includes(num)){          
-            setDaily(daily.filter(iten => iten !== num))          
-        }else(
-            setDaily([...daily,num])
+    function add(num) {
+        if (daily.includes(num)) {
+            setDaily(daily.filter(iten => iten !== num))
+        } else (
+            setDaily([...daily, num])
         )
     }
 
-    function save(e){
+    function save(e) {
         e.preventDefault();
-    const requisicao = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits",{
-        name: habit,
-        days: daily
-    },token)
-    .then((resposta) => {
-        setHabit(""),
-        setDaily([]),
-        setNewhabit(false)
-        setHabits([...habits,resposta.data])
-    })
-    .catch((e) => alert(e.response.data.message))
+        const requisicao = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits", {
+            name: habit,
+            days: daily
+        }, token)
+            .then((resposta) => {
+                setHabit(""),
+                    setDaily([]),
+                    setNewhabit(false)
+                setHabits([...habits, resposta.data])
+            })
+            .catch((e) => alert(e.response.data.message))
     }
 
 
 
-    if(!habits){
-        return(
-        <div>
-            Carregando...
-        </div>
+    if (!habits) {
+        return (
+            <div>
+                Carregando...
+            </div>
         )
     }
 
@@ -100,7 +102,14 @@ export default function Habits() {
                 <p>Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</p>
             </NoItens>
             {listhabits(habits)}
-            {footer()}
+            <Footer>
+                <h2><Icon>calendar_month</Icon>
+                    Hábitos
+                </h2>
+                <h2 onClick={() => navigate('/hoje')}><Icon>event_available</Icon>
+                    Hoje
+                </h2>
+            </Footer>
         </Back>
     )
 }
@@ -238,7 +247,7 @@ const Enter = styled.input`
     text-align: left;
 `
 const NoItens = styled.div`
-    display: ${props =>(props.$noitens?"none":"flex")};
+    display: ${props => (props.$noitens ? "none" : "flex")};
     font-family: Lexend Deca;
     font-size: 17.98px;
     font-weight: 400;
@@ -261,6 +270,28 @@ const Day = styled.div`
     line-height: 24.97px;
     text-align: center;
 
-    color: ${props => (props.$bg? "#FFFFFF": "#DBDBDB")} ;
-    background-color: ${props => (props.$bg? "#DBDBDB": "#FFFFFF")};
+    color: ${props => (props.$bg ? "#FFFFFF" : "#DBDBDB")} ;
+    background-color: ${props => (props.$bg ? "#DBDBDB" : "#FFFFFF")};
+`
+
+const Footer = styled.div`
+    position: fixed;
+    bottom:0;
+    left:0;
+    width: 100%;
+    height: 70px;
+    background-color: #FFFFFF;
+
+    display: flex;
+    align-items: center;
+    h2{
+
+        width:50%;
+        font-family: Lexend Deca;
+        font-size: 17.98px;
+        font-weight: 400;
+        line-height: 22.47px;
+        display: flex;
+        justify-content: center;
+    }
 `
