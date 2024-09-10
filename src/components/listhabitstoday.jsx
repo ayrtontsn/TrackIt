@@ -5,7 +5,6 @@ import check from '../assets/check.svg';
 
 
 export default function listhabitstoday(token) {
-    const d = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"]
     const [habits, setHabits] = useState(null)
     
 
@@ -13,7 +12,7 @@ export default function listhabitstoday(token) {
         const requisicao = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today", token)
             .then(resposta => { setHabits(resposta.data) })
             .catch(e => console.log(e.response.data.message))
-    }, [])
+    }, [habits])
 
     if(!habits){
         return(
@@ -23,18 +22,25 @@ export default function listhabitstoday(token) {
         )
     }
 
+    function score(done,id){
+        if(!done){
+            const requisicao = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/check`,"",token)
+        }else{
+            const requisicao = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/uncheck`,"",token)
+        }
+    }
 
     return (
         habits.map(habit => (
                 <Habit key={habit.id}>
                     <Info>
                     <h5>{habit.name}</h5>
-                    <Sequencia>
+                    <Sequence>
                         <h4>{`Sequência atual: ${habit.currentSequence}`}</h4>
                         <h4>{`Seu recorde: ${habit.highestSequence}`}</h4>
-                    </Sequencia>
+                    </Sequence>
                     </Info>
-                    <Ion src={check}></Ion>
+                    <Ion $done={habit.done} src={check} onClick={()=>score(habit.done,habit.id)}></Ion>
                 </Habit>)
         ))
 }
@@ -78,12 +84,12 @@ const Ion = styled.img`
     width: 35px;
     height: 35px;
 
-    background-color: #EBEBEB;
+    background-color: ${props => (props.$done? "#8FC549": "#EBEBEB")};
     padding: 17px;
     border-radius: 5px;
     
 `
-const Sequencia = styled.div`
+const Sequence = styled.div`
     display: block;
     padding: 15px 0;
 

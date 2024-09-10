@@ -58,6 +58,8 @@ const Header = styled.div`
     background-color: #126BA5;
     justify-content: space-between;
 
+    z-index:2;
+
     h1{
         font-family: Playball;
         font-size: 38.98px;
