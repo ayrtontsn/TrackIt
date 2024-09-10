@@ -4,6 +4,16 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom"
 import Icon from '@mui/material/Icon';
 import listhabitstoday from "../components/listhabitstoday";
+import dayjs from "dayjs";
+import updateLocale from 'dayjs/plugin/updateLocale'
+
+dayjs.extend(updateLocale)
+
+dayjs.updateLocale('pt-br', {
+    weekdays: [
+      "Domingo","Segunda", "Terça","Quarta","Quinta","Sexta","Sábado"
+    ]
+  })
 
 export default function today() {
     const location = useLocation();
@@ -13,6 +23,7 @@ export default function today() {
     const image = location.image
     const name = location.name
     const token = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
+       
 
     return (
         <Back>
@@ -21,16 +32,16 @@ export default function today() {
                 <img src={image} alt="user image"></img>
             </Header>
             <Title>
-                <h2>(DIA DE HOJE)</h2>
+                <h2>{dayjs().format('dddd, DD/MM')}</h2>
             </Title>
             {listhabitstoday(token)}
             <Footer>
-                <h2 onClick={() => navigate('/habitos')}><Icon>calendar_month</Icon>
+                <Habit onClick={() => navigate('/habitos')}><Icon>calendar_month</Icon>
                     Hábitos
-                </h2>
-                <h2 onClick={() => navigate('/hoje')}><Icon>event_available</Icon>
+                </Habit>
+                <Today onClick={() => navigate('/hoje')}><Icon>event_available</Icon>
                     Hoje
-                </h2>
+                </Today>
             </Footer>
         </Back>
     )
@@ -122,10 +133,9 @@ const Footer = styled.div`
     left:0;
     width: 100%;
     height: 70px;
-    background-color: #FFFFFF;
-
     display: flex;
     align-items: center;
+
     h2{
 
         width:50%;
@@ -136,4 +146,20 @@ const Footer = styled.div`
         display: flex;
         justify-content: center;
     }
+`
+const Today = styled.h2`
+    background-color: #52B6FF;
+    color: #FFFFFF;
+    align-items: center;
+
+    width: 50%;
+    height:70px;
+`
+const Habit = styled.h2`
+    background-color: #FFFFFF;
+    color: #D4D4D4;
+    align-items: center;
+
+    width: 50%;
+    height:70px;
 `
