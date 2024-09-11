@@ -1,12 +1,16 @@
 import styled from "styled-components"
-import { useState, useContext} from "react";
+import { useState, useContext, useEffect} from "react";
 import axios from 'axios';
 
+import { ThreeDots } from "react-loader-spinner";
 import tokenContext from "../contexts/TokenContext";
 
 export default function newHabit(inputNewHabit,setInputNewHabit,habits, setHabits) {
     const [habit, setHabit] = useState("")
     const [daily, setDaily] = useState([])
+
+    const [loading, setLoading] = useState(false)
+    const [buttonEntrar, setButtonEntrar] = useState("Salvar")
 
     const {token, setToken} = useContext(tokenContext)
     const auth = {
@@ -14,8 +18,27 @@ export default function newHabit(inputNewHabit,setInputNewHabit,habits, setHabit
             Authorization: `Bearer ${token}`}
         }
 
+    useEffect(()=>{
+        if(!loading){
+            setButtonEntrar("Salvar")
+        }else{
+            setButtonEntrar((<ThreeDots
+                visible={true}
+                height="13"
+                width="51"
+                color="#FFFFFF"
+                radius="9"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+                />))
+        }
+    },[loading])
+
     function save(e) {
         e.preventDefault();
+        setLoading(true)
+
         const requisicao = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits", {
             name: habit,
             days: daily
@@ -23,10 +46,14 @@ export default function newHabit(inputNewHabit,setInputNewHabit,habits, setHabit
             .then((resposta) => {
                 setHabit(""),
                     setDaily([]),
-                    setInputNewHabit(false)
+                    setInputNewHabit(false),
+                    setLoading(false),
                 setHabits([...habits, resposta.data])
             })
-            .catch((e) => alert(e.response.data.message))
+            .catch((e) => {
+                alert(e.response.data.message),
+                setLoading(false)
+            })
     }
 
     function week() {
@@ -35,7 +62,7 @@ export default function newHabit(inputNewHabit,setInputNewHabit,habits, setHabit
             days.map(day => (
                 <Day
                     key={days.indexOf(day)}
-                    onClick={() => add(days.indexOf(day))}
+                    onClick={() => !loading && add(days.indexOf(day))}
                     $bg={daily.includes(days.indexOf(day))}
                 >{day[0]}</Day>
             ))
@@ -58,13 +85,14 @@ export default function newHabit(inputNewHabit,setInputNewHabit,habits, setHabit
                 type="text"
                 value={habit}
                 onChange={e => setHabit(e.target.value)}
+                disabled={loading}
                 minLength={"5"} />
             <Week>
             {week()}
             </Week>
             <Button>
                 <h5 onClick={() => setInputNewHabit(false)}>Cancelar</h5>
-                <button type="submit" onClick={save}> Salvar</button>
+                <button type="submit" onClick={save}> {buttonEntrar}</button>
             </Button>
         </NewHabit>)
 }

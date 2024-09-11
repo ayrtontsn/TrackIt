@@ -4,6 +4,7 @@ import axios from 'axios';
 import check from '../assets/check.svg';
 import tokenContext from "../contexts/TokenContext";
 
+import { Oval } from "react-loader-spinner";
 
 export default function listhabitstoday() {
     const [habits, setHabits] = useState(null)
@@ -19,11 +20,20 @@ export default function listhabitstoday() {
             .catch(e => console.log(e.response.data.message))
     }, [habits])
 
-    if(!habits){
-        return(
-            <div>
-                Carregando...
-            </div>
+    if (!habits) {
+        return (
+            <Loading>
+                {(<Oval
+                visible={true}
+                height="100"
+                width="100"
+                color="#52B6FF"
+                secondaryColor="#FFFFFF"
+                ariaLabel="oval-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+                />)}
+            </Loading>
         )
     }
 
@@ -128,4 +138,10 @@ const NoItens = styled.div`
     color: #666666;
 
     margin: 0 25px;
+`
+
+const Loading = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: center;
 `

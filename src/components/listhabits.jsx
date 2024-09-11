@@ -4,6 +4,8 @@ import axios from 'axios';
 
 import tokenContext from "../contexts/TokenContext";
 
+import { Oval } from "react-loader-spinner";
+
 export default function listhabits(habits, setHabits) {
     const d = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"]
     const {token, setToken} = useContext(tokenContext)
@@ -21,9 +23,18 @@ export default function listhabits(habits, setHabits) {
 
     if (!habits) {
         return (
-            <div>
-                Carregando...
-            </div>
+            <Loading>
+                {(<Oval
+                visible={true}
+                height="100"
+                width="100"
+                color="#52B6FF"
+                secondaryColor="#FFFFFF"
+                ariaLabel="oval-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+                />)}
+            </Loading>
         )
     }
 
@@ -104,4 +115,9 @@ const NoItens = styled.div`
     color: #666666;
 
     margin: 0 25px;
+`
+const Loading = styled.div`
+    width: 100%;
+    display: flex;
+    justify-content: center;
 `

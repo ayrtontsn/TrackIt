@@ -30,6 +30,7 @@ export default function today() {
 
     function deslogar(){
         localStorage.removeItem("token")
+        setToken("")
         navigate("/")
     }
 

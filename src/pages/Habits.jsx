@@ -27,6 +27,7 @@ export default function Habits() {
 
     function deslogar(){
         localStorage.removeItem("token")
+        setToken("")
         navigate("/")
     }
 

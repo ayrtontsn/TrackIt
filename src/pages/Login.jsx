@@ -1,12 +1,14 @@
 import styled from "styled-components"
 import trackitlogo from '../assets/trackit.svg'
 import axios from 'axios';
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom"
 
 import userContext from "../contexts/UserContext";
 import tokenContext from "../contexts/TokenContext";
+
+import { ThreeDots } from "react-loader-spinner";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("")
@@ -15,8 +17,12 @@ export default function LoginPage() {
     const {usuario, setUsuario} = useContext(userContext)
     const {token, setToken} = useContext(tokenContext)
 
+    const [loading, setLoading] = useState(false)
+    const [buttonEntrar, setButtonEntrar] = useState("Entrar")
+
     function login(event) {
         event.preventDefault();
+        setLoading(true)
 
         const requisicao = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login", {
             
@@ -26,13 +32,39 @@ export default function LoginPage() {
             localStorage.setItem("token",e.data.token),
             setUsuario(e.data),
             setToken(e.data.token),
-            //setLoading(false),
+            setLoading(false),
             navigate("/habitos")})
         requisicao.catch((err) => {
             alert(err.response.data.message)
-            //setLoading(false)
+            setLoading(false)
             })
     }
+
+    useEffect(()=>{
+
+        if(token){
+            navigate("/habitos")
+        }
+
+    },[])
+    
+
+    useEffect(()=>{
+        if(!loading){
+            setButtonEntrar("Entrar")
+        }else{
+            setButtonEntrar((<ThreeDots
+                visible={true}
+                height="13"
+                width="51"
+                color="#FFFFFF"
+                radius="9"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+                />))
+        }
+    },[loading])
 
     return (
         <Back>
@@ -44,6 +76,7 @@ export default function LoginPage() {
                     required
                     type="text"
                     value={email}
+                    disabled={loading}
                     onChange={e => setEmail(e.target.value)} />
                     
                 <Enter
@@ -52,9 +85,10 @@ export default function LoginPage() {
                     required
                     type="password"
                     value={password}
+                    disabled={loading}
                     onChange={e => setPassword(e.target.value)} />
 
-                <button type="submit"> Entrar</button>
+                <button type="submit"> {buttonEntrar}</button>
                 <Register to="/cadastro">Não tem uma conta? Cadastre-se! </Register>
             </Forms>
 
@@ -91,6 +125,10 @@ flex-wrap: wrap;
         color: #FFFFFF;
         border-radius: 8px;
         border: 0;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
         
     }
 `

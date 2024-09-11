@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom"
+import { ThreeDots } from "react-loader-spinner";
 
 export default function Signup(){
     const [loading, setLoading] = useState(false)
@@ -12,6 +13,8 @@ export default function Signup(){
     const [password, setPassword] = useState("")
     const [name, setName] = useState("")
     const [image, setImage] = useState("")
+
+    const [buttonEntrar, setButtonEntrar] = useState("Cadastrar")
 
     const navigate = useNavigate();
 
@@ -39,6 +42,23 @@ export default function Signup(){
         setName("")
         setPassword("")
     }
+
+    useEffect(()=>{
+        if(!loading){
+            setButtonEntrar("Cadastrar")
+        }else{
+            setButtonEntrar((<ThreeDots
+                visible={true}
+                height="13"
+                width="51"
+                color="#FFFFFF"
+                radius="9"
+                ariaLabel="three-dots-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+                />))
+        }
+    },[loading])
 
     return (
         <Back>
@@ -80,7 +100,7 @@ export default function Signup(){
                     />
 
                 <button type="submit" disabled={loading}>
-                    {!loading?"Cadastrar":"Carregando..."}</button>
+                    {buttonEntrar}</button>
                 <Login to="/">Já tem uma conta? Faça login! </Login>
             </Forms>
 
@@ -116,6 +136,10 @@ flex-wrap: wrap;
         color: #FFFFFF;
         border-radius: 8px;
         border: 0;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
         
     }
 `
