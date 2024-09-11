@@ -1,40 +1,49 @@
 import styled from "styled-components"
-import axios from 'axios';
-import { useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom"
 import Icon from '@mui/material/Icon';
 import listhabitstoday from "../components/listhabitstoday";
 import dayjs from "dayjs";
 import updateLocale from 'dayjs/plugin/updateLocale'
 
+import userContext from "../contexts/UserContext";
+import tokenContext from "../contexts/TokenContext";
+
 dayjs.extend(updateLocale)
 
-dayjs.updateLocale('pt-br', {
+dayjs.updateLocale('en', {
     weekdays: [
       "Domingo","Segunda", "Terça","Quarta","Quinta","Sexta","Sábado"
     ]
   })
 
 export default function today() {
-    const location = useLocation();
     const navigate = useNavigate();
+    const {usuario, setUsuario} = useContext(userContext)   
+    const {token,setToken} = useContext(tokenContext)    
 
-    const id = location.id
-    const image = location.image
-    const name = location.name
-    const token = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
-       
+    useEffect(() => {
+        if(!token){
+            navigate("/")
+        }
+    },[])
+
+    function deslogar(){
+        localStorage.removeItem("token")
+        navigate("/")
+    }
+
 
     return (
         <Back>
             <Header>
                 <h1>TrackIt</h1>
-                <img src={image} alt="user image"></img>
+                <img src={usuario.image} alt="user image" onClick={deslogar}></img>
             </Header>
             <Title>
                 <h2>{dayjs().format('dddd, DD/MM')}</h2>
             </Title>
-            {listhabitstoday(token)}
+            {listhabitstoday()}
             <Footer>
                 <Habit onClick={() => navigate('/habitos')}><Icon>calendar_month</Icon>
                     Hábitos

@@ -1,12 +1,20 @@
 import styled from "styled-components"
-import { useEffect, useState } from "react";
+import { useEffect,useContext } from "react";
 import axios from 'axios';
 
-export default function listhabits(token, habits, setHabits) {
+import tokenContext from "../contexts/TokenContext";
+
+export default function listhabits(habits, setHabits) {
     const d = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"]
+    const {token, setToken} = useContext(tokenContext)
+    
+    const auth = {
+        headers: {
+            Authorization: `Bearer ${token}`}
+        }
 
     useEffect(() => {
-        const requisicao = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits", token)
+        const requisicao = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits", auth)
             .then(resposta => { setHabits(resposta.data) })
             .catch(e => console.log(e.response.data.message))
     }, [])

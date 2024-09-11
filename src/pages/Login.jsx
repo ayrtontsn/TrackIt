@@ -1,14 +1,19 @@
 import styled from "styled-components"
 import trackitlogo from '../assets/trackit.svg'
 import axios from 'axios';
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom"
+
+import userContext from "../contexts/UserContext";
+import tokenContext from "../contexts/TokenContext";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const navigate = useNavigate();
+    const {usuario, setUsuario} = useContext(userContext)
+    const {token, setToken} = useContext(tokenContext)
 
     function login(event) {
         event.preventDefault();
@@ -18,7 +23,9 @@ export default function LoginPage() {
             email, password
         })
         requisicao.then((e) => {
-            localStorage.setItem("token",e.data.token)
+            localStorage.setItem("token",e.data.token),
+            setUsuario(e.data),
+            setToken(e.data.token),
             //setLoading(false),
             navigate("/habitos")})
         requisicao.catch((err) => {

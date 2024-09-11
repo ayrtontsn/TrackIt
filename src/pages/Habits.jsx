@@ -1,47 +1,57 @@
 import styled from "styled-components"
-import trackitlogo from '../assets/trackit.svg'
-import axios from 'axios';
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom"
 import Icon from '@mui/material/Icon';
 
+import userContext from "../contexts/UserContext";
+
 import listhabits from "../components/listhabits";
 import newHabit from "../components/newhabit";
+import tokenContext from "../contexts/TokenContext";
 
 export default function Habits() {
-    const location = useLocation();
     const navigate = useNavigate();
+    const {token,setToken} = useContext(tokenContext)    
 
-    const id = location.id
-    const image = location.image
-    const name = location.name
-    const token = { headers: { Authorization: "Bearer " + localStorage.getItem("token") } }
+    useEffect(() => {
+        if(!token){
+            navigate("/")
+        }
+    },[])
 
+    const {usuario, setUsuario} = useContext(userContext)
     const [inputNewHabit, setInputNewHabit] = useState(false)
     const [habits, setHabits] = useState(null)
 
+
+
+    function deslogar(){
+        localStorage.removeItem("token")
+        navigate("/")
+    }
+
     return (
-        <Back>
-            <Header>
-                <h1>TrackIt</h1>
-                <img src={image} alt="user image"></img>
-            </Header>
-            <Title>
-                <h2>Meus habitos</h2>
-                <h3 onClick={() => { setInputNewHabit(true) }}>+</h3>
-            </Title>
-            {newHabit(token, inputNewHabit,setInputNewHabit,habits, setHabits)}
-            {listhabits(token,habits, setHabits)}
-            <Footer>
-                <Habit><Icon>calendar_month</Icon>
-                    Hábitos
-                </Habit>
-                <Today onClick={() => navigate('/hoje')}><Icon>event_available</Icon>
-                    Hoje
-                </Today>
-            </Footer>
-        </Back>
+
+            <Back>
+                <Header>
+                    <h1>TrackIt</h1>
+                    <img src={usuario.image} alt="user image" onClick={deslogar}></img>
+                </Header>
+                <Title>
+                    <h2>Meus habitos</h2>
+                    <h3 onClick={() => { setInputNewHabit(true) }}>+</h3>
+                </Title>
+                {newHabit(inputNewHabit, setInputNewHabit, habits, setHabits)}
+                {listhabits(habits, setHabits)}
+                <Footer>
+                    <Habit><Icon>calendar_month</Icon>
+                        Hábitos
+                    </Habit>
+                    <Today onClick={() => navigate('/hoje')}><Icon>event_available</Icon>
+                        Hoje
+                    </Today>
+                </Footer>
+            </Back>
     )
 }
 const Back = styled.div`

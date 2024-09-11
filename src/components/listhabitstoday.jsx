@@ -1,15 +1,20 @@
 import styled from "styled-components"
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import axios from 'axios';
 import check from '../assets/check.svg';
+import tokenContext from "../contexts/TokenContext";
 
 
-export default function listhabitstoday(token) {
+export default function listhabitstoday() {
     const [habits, setHabits] = useState(null)
-    
+    const {token, setToken} = useContext(tokenContext)
+    const auth = {
+        headers: {
+            Authorization: `Bearer ${token}`}
+        }
 
     useEffect(() => {
-        const requisicao = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today", token)
+        const requisicao = axios.get("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today", auth)
             .then(resposta => { setHabits(resposta.data) })
             .catch(e => console.log(e.response.data.message))
     }, [habits])
@@ -24,14 +29,18 @@ export default function listhabitstoday(token) {
 
     function score(done,id){
         if(!done){
-            const requisicao = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/check`,"",token)
+            const requisicao = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/check`,"",auth)
         }else{
-            const requisicao = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/uncheck`,"",token)
+            const requisicao = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/uncheck`,"",auth)
         }
     }
 
     return (
-        habits.map(habit => (
+        <>
+        <NoItens $noitens={habits.length}>
+            <p>Você não tem nenhum hábito cadastrado hoje</p>
+        </NoItens>
+        {habits.map(habit => (
                 <Habit key={habit.id}>
                     <Info>
                     <h5>{habit.name}</h5>
@@ -41,8 +50,9 @@ export default function listhabitstoday(token) {
                     </Sequence>
                     </Info>
                     <Ion $done={habit.done} src={check} onClick={()=>score(habit.done,habit.id)}></Ion>
-                </Habit>)
-        ))
+                </Habit>))}
+        </>
+        )
 }
 
 const Habit = styled.div`
@@ -106,6 +116,16 @@ const Sequence = styled.div`
         color: #666666;
         margin:0;
     }
+`
 
+const NoItens = styled.div`
+    display: ${props => (props.$noitens ? "none" : "flex")};
+    font-family: Lexend Deca;
+    font-size: 17.98px;
+    font-weight: 400;
+    line-height: 22.47px;
+    text-align: left;
+    color: #666666;
 
+    margin: 0 25px;
 `

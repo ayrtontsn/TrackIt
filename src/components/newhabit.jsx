@@ -1,17 +1,25 @@
 import styled from "styled-components"
-import { useState } from "react";
+import { useState, useContext} from "react";
 import axios from 'axios';
 
-export default function newHabit(token, inputNewHabit,setInputNewHabit,habits, setHabits) {
+import tokenContext from "../contexts/TokenContext";
+
+export default function newHabit(inputNewHabit,setInputNewHabit,habits, setHabits) {
     const [habit, setHabit] = useState("")
     const [daily, setDaily] = useState([])
+
+    const {token, setToken} = useContext(tokenContext)
+    const auth = {
+        headers: {
+            Authorization: `Bearer ${token}`}
+        }
 
     function save(e) {
         e.preventDefault();
         const requisicao = axios.post("https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits", {
             name: habit,
             days: daily
-        }, token)
+        }, auth)
             .then((resposta) => {
                 setHabit(""),
                     setDaily([]),
